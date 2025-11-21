@@ -25,7 +25,6 @@ Makefile
 *.swo
 
 # ROS 2 launch/log/temp files
-*.launch.*
 *.test
 *.bag
 *.db3
