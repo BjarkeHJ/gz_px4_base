@@ -17,6 +17,7 @@ set(GZ_PX4_BASE_CONFIG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../config)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(px4_msgs REQUIRED)
+find_package(px4_ros_com REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
@@ -32,6 +33,7 @@ add_executable(${EXEC_NAME}
 ament_target_dependencies(${EXEC_NAME} 
   rclcpp
   px4_msgs
+  px4_ros_com
   geometry_msgs
   sensor_msgs
   tf2_ros
