@@ -11,7 +11,7 @@ from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
-    pkg_share = get_package_share_directory('gz_px4_env')
+    pkg_share = get_package_share_directory('gz_px4')
     
     config_file = os.path.join(pkg_share, "config", "bridge_config.yaml")
     

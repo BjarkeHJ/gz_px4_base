@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# export ROS_LOCALHOST_ONLY=1
-
 # --- Paths --- 
 PX4_DIR="$HOME/PX4-Autopilot"
-ENV_DIR="$HOME/Gz-PX4-Environment"
+SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+ENV_DIR_DEFAULT="$(cd -- "${SCRIPT_DIR}/.." >/dev/null 2>&1 && pwd)"
+ENV_DIR="${ENV_DIR:-$ENV_DIR_DEFAULT}" # Allows override via env (not used atm)
+PX4_SIM_PATH="${PX4_DIR}/Tools/simulation/gz"
 
 WORLD_NAME="forest"
 PX4_MODEL="test"
@@ -43,24 +44,38 @@ if [[ ! -x "${PX4_DIR}/build/px4_sitl_default/bin/px4" ]]; then
 fi
 
 # --- GZ Resource Path
-PX4_GZ_PATH="${PX4_DIR}/Tools/simulation/gz"
+export GZ_SIM_RESOURCE_PATH="${ENV_DIR}/worlds:${ENV_DIR}/models:${PX4_SIM_PATH}/models:${PX4_SIM_PATH}/worlds:${GZ_SIM_RESOURCE_PATH:-}"
+export GZ_SIM_SERVER_CONFIG_PATH="${PX4_SIM_PATH}/server.config"
+export GZ_SIM_SYSTEM_PLUGIN_PATH="${PX4_SIM_PATH}/plugins:${GZ_SIM_SYSTEM_PLUGIN_PATH:-}"
 
-export GZ_SIM_RESOURCE_PATH="${ENV_DIR}/worlds:${ENV_DIR}/models:${PX4_GZ_PATH}/models:${PX4_GZ_PATH}/worlds:${GZ_SIM_RESOURCE_PATH:-}"
-export GZ_SIM_SERVER_CONFIG_PATH="${PX4_GZ_PATH}/server.config"
-export GZ_SIM_SYSTEM_PLUGIN_PATH="${PX4_GZ_PATH}/plugins:${GZ_SIM_SYSTEM_PLUGIN_PATH:-}"
-
+# --- PIDs to track for cleanup
 GZ_PID=""
+BRIDGE_PID=""
+AGENT_PID=""
 
 # Clean-up function
 cleanup() {
   echo
-  echo "[run_gz_px4] Cleanup: stopping Gazebo and PX4..."
-  if [[ -n "${GZ_PID}" ]] && kill -0 "${GZ_PID}" 2>/dev/null; then
+  echo "[run_gz_px4] Cleanup: stopping Gazebo, bridge, agent, and PX4..."
+
+  if [[ -n "${BRIDGE_PID:-}" ]] && kill -0 "${BRIDGE_PID}" 2>/dev/null; then
+    echo "[run_gz_px4] Stopping ROS 2 bridge (PID=${BRIDGE_PID})..."
+    kill "${BRIDGE_PID}" 2>/dev/null || true
+    wait "${BRIDGE_PID}" 2>/dev/null || true
+  fi
+
+  if [[ -n "${AGENT_PID:-}" ]] && kill -0 "${AGENT_PID}" 2>/dev/null; then
+    echo "[run_gz_px4] Stopping Micro XRCE-DDS Agent (PID=${AGENT_PID})..."
+    kill "${AGENT_PID}" 2>/dev/null || true
+    wait "${AGENT_PID}" 2>/dev/null || true
+  fi
+
+  if [[ -n "${GZ_PID:-}" ]] && kill -0 "${GZ_PID}" 2>/dev/null; then
     echo "[run_gz_px4] Stopping Gazebo (PID=${GZ_PID})..."
     kill "${GZ_PID}" 2>/dev/null || true
-    # Optional: wait for gz to exit
     wait "${GZ_PID}" 2>/dev/null || true
   fi
+
   echo "[run_gz_px4] Cleanup done."
 }
 
@@ -71,8 +86,8 @@ trap 'cleanup; exit 0' INT TERM
 # Prefer local env world, fall back to PX4's worlds
 if [[ -f "${ENV_DIR}/worlds/${WORLD_NAME}.sdf" ]]; then
   WORLD_FILE="${ENV_DIR}/worlds/${WORLD_NAME}.sdf"
-elif [[ -f "${PX4_GZ_PATH}/worlds/${WORLD_NAME}.sdf" ]]; then
-  WORLD_FILE="${PX4_GZ_PATH}/worlds/${WORLD_NAME}.sdf"
+elif [[ -f "${PX4_SIM_PATH}/worlds/${WORLD_NAME}.sdf" ]]; then
+  WORLD_FILE="${PX4_SIM_PATH}/worlds/${WORLD_NAME}.sdf"
 else
   echo "[run_gz_px4] ERROR: world file not found in ENV_DIR or PX4: ${WORLD_NAME}.sdf" >&2
   exit 1
@@ -83,19 +98,32 @@ if [[ "${HEADLESS}" -eq 1 ]]; then
   GZ_CMD+=(-s)
 fi
 
-echo "[run_gz_px4] Using PX4_DIR=${PX4_DIR}"
-echo "[run_gz_px4] Using ENV_DIR=${ENV_DIR}"
-echo "[run_gz_px4] Using GZ_SIM_RESOURCE_PATH=${GZ_SIM_RESOURCE_PATH}"
-echo "[run_gz_px4] World file: ${WORLD_FILE}"
-
 echo "[run_gz_px4] Starting Gazebo: ${GZ_CMD[*]}"
 setsid "${GZ_CMD[@]}" &
 GZ_PID=$!
-
 sleep 5
 
+# --- Start ROS 2 bridge via launch file
+echo "[run_gz_px4] Starting ROS 2 bridge..."
+if [[ ! -f "${ENV_DIR}/install/setup.bash" ]]; then
+  echo "[run_gz_px4] ERROR: ${ENV_DIR}/install/setup.bash not found. Did you colcon build?" >&2
+  exit 1
+fi
+cd "${ENV_DIR}"
+# Relax strict mode while sourcing ROS2 env
+set +e
+set +u
+source install/setup.bash
+set -e
+set -u
+ros2 launch gz_px4 bridge.launch.py &
+BRIDGE_PID=$!
+
 # --- Start Micro XRCE-DDS Agent (For uORB->ROS2 topics)
+echo "[run_gz_px4] Starting Micro XRCE-DDS Agent..."
 MicroXRCEAgent udp4 -p 8888 &
+AGENT_PID=$!
+sleep 5
 
 # --- Start PX4 in Standalone (Will identify the GZ SIM instance)
 cd "${PX4_DIR}"

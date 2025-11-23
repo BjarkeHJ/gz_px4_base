@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(gz_px4_env)
+project(gz_px4)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -10,6 +10,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(EXEC_NAME tester)
 
+# Set path to config folder in repo root
+set(GZ_PX4_BASE_CONFIG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../config)
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -19,7 +22,7 @@ include_directories(
 )  
   
 add_executable(${EXEC_NAME} 
-  src/test.cpp)
+  src/tf_pub.cpp)
 
 ament_target_dependencies(${EXEC_NAME} 
   rclcpp
@@ -35,12 +38,17 @@ install(DIRECTORY
   DESTINATION include
 )
 
+# Install launch directory 
 install(DIRECTORY
   launch
-  config
-  worlds
   DESTINATION share/${PROJECT_NAME}/
-)  
+  )  
+  
+# Install workspace config folder in package
+install(DIRECTORY
+  ${GZ_PX4_BASE_CONFIG_DIR}/ 
+  DESTINATION share/${PROJECT_NAME}/config
+  )
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
