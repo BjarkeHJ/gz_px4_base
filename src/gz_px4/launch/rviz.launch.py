@@ -12,12 +12,10 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
     pkg_share = get_package_share_directory("gz_px4")
 
-    # Default RViz config (optional)
-    default_rviz_config = os.path.join(pkg_share, "config", "default.rviz")
-
+    rviz_config = os.path.join(pkg_share, "config", "rviz_config.rviz")
     rviz_config_arg = DeclareLaunchArgument(
         "rviz_config",
-        default_value=default_rviz_config,
+        default_value=rviz_config,
         description="Full path to RViz config file",
     )
 

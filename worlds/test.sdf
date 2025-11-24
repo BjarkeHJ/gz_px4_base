@@ -1,5 +1,5 @@
 <sdf version='1.10'>
-  <world name='default'>
+  <world name='test'>
     <physics type='ode'>
       <max_step_size>0.0040000000000000001</max_step_size>
       <real_time_factor>1</real_time_factor>
@@ -71,11 +71,7 @@
       <pose>0 0 0 0 0 0</pose>
       <self_collide>false</self_collide>
     </model>
-    <include>
-      <uri>file:///home/bhj/Gz-PX4-Environment/models//test</uri>
-      <name>test_0</name>
-      <pose>-3.1005524671462782e-11 1.6733939097594675e-18 -0.01300018436061684 -1.7426875907543484e-17 2.3528453805774179e-09 -3.364415291480186e-18</pose>
-    </include>
+    
     <model name='box'>
       <pose>1.6199999999999999 -0.099999999999999936 0.49999999843196863 -1.3406836108838455e-19 -4.4987835718282293e-20 2.0400000000000005</pose>
       <link name='box_link'>

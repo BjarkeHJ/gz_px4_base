@@ -33,16 +33,13 @@ void PxOdomToTf::odomCallback(const px4_msgs::msg::VehicleOdometry::SharedPtr ms
     // --- Orientation: aircraft(FRD)->NED  ->  base_link(FLU)->ENU ---
 
     // PX4 stores quaternion as Hamilton (w, x, y, z) from body(FRD) -> world(NED)
-    Eigen::Quaterniond q_px4 =
-        utils::quaternion::array_to_eigen_quat(msg->q);  // (w,x,y,z)
+    Eigen::Quaterniond q_px4 = utils::quaternion::array_to_eigen_quat(msg->q);  // (w,x,y,z)
 
     // Convert aircraft(FRD) frame to ROS base_link(FLU) frame
-    Eigen::Quaterniond q_baselink_ned =
-        aircraft_to_baselink_orientation(q_px4);
+    Eigen::Quaterniond q_baselink_ned = aircraft_to_baselink_orientation(q_px4);
 
     // Convert world frame NED -> ENU
-    Eigen::Quaterniond q_baselink_enu =
-        ned_to_enu_orientation(q_baselink_ned);
+    Eigen::Quaterniond q_baselink_enu = ned_to_enu_orientation(q_baselink_ned);
 
     // --- Pack into TF message ---
     geometry_msgs::msg::TransformStamped tf_msg;

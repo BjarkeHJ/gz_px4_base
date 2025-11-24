@@ -16,16 +16,26 @@ set(GZ_PX4_BASE_CONFIG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../config)
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(px4_msgs REQUIRED)
+
+find_package(Eigen3 REQUIRED)
 
 include_directories(
   include
 )  
   
 add_executable(${EXEC_NAME} 
-  src/offboard_control.cpp)
+  src/ros_control.cpp)
 
 ament_target_dependencies(${EXEC_NAME} 
   rclcpp
+  geometry_msgs
+  px4_msgs
+)
+
+target_link_libraries(${EXEC_NAME}
+  Eigen3::Eigen
 )
 
 install(TARGETS

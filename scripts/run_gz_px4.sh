@@ -8,8 +8,8 @@ ENV_DIR_DEFAULT="$(cd -- "${SCRIPT_DIR}/.." >/dev/null 2>&1 && pwd)"
 ENV_DIR="${ENV_DIR:-$ENV_DIR_DEFAULT}" # Allows override via env (not used atm)
 PX4_SIM_PATH="${PX4_DIR}/Tools/simulation/gz"
 
-WORLD_NAME="forest"
-PX4_MODEL="test"
+WORLD_NAME="test"
+PX4_MODEL="x500_lidar"
 HEADLESS=0
 
 # --- Argument Parsing --- 
@@ -50,31 +50,32 @@ export GZ_SIM_SYSTEM_PLUGIN_PATH="${PX4_SIM_PATH}/plugins:${GZ_SIM_SYSTEM_PLUGIN
 
 # --- PIDs to track for cleanup
 GZ_PID=""
-BRIDGE_PID=""
 AGENT_PID=""
+BRIDGE_PID=""
+TF_PID=""
 
 # Clean-up function
 cleanup() {
   echo
   echo "[run_gz_px4] Cleanup: stopping Gazebo, bridge, agent, and PX4..."
 
-  if [[ -n "${BRIDGE_PID:-}" ]] && kill -0 "${BRIDGE_PID}" 2>/dev/null; then
-    echo "[run_gz_px4] Stopping ROS 2 bridge (PID=${BRIDGE_PID})..."
-    kill "${BRIDGE_PID}" 2>/dev/null || true
-    wait "${BRIDGE_PID}" 2>/dev/null || true
-  fi
+  # Stop process function
+  stop_proc() { 
+    local name=$1
+    local pid_var=$2
+    local pid=${!pid_var-}   # value of the variable whose name is in pid_var (or empty if unset)
 
-  if [[ -n "${AGENT_PID:-}" ]] && kill -0 "${AGENT_PID}" 2>/dev/null; then
-    echo "[run_gz_px4] Stopping Micro XRCE-DDS Agent (PID=${AGENT_PID})..."
-    kill "${AGENT_PID}" 2>/dev/null || true
-    wait "${AGENT_PID}" 2>/dev/null || true
-  fi
+    if [[ -n "$pid" ]] && kill -0 "$pid" 2>/dev/null; then
+      echo "[run_gz_px4] Stopping ${name} (PID=${pid})..."
+      kill "$pid" 2>/dev/null || true
+      wait "$pid" 2>/dev/null || true
+    fi
+  }
 
-  if [[ -n "${GZ_PID:-}" ]] && kill -0 "${GZ_PID}" 2>/dev/null; then
-    echo "[run_gz_px4] Stopping Gazebo (PID=${GZ_PID})..."
-    kill "${GZ_PID}" 2>/dev/null || true
-    wait "${GZ_PID}" 2>/dev/null || true
-  fi
+  stop_proc "ROS 2 bridge"        BRIDGE_PID
+  stop_proc "TF Publisher"        TF_PID
+  stop_proc "Micro XRCE-DDS Agent" AGENT_PID
+  stop_proc "Gazebo"              GZ_PID
 
   echo "[run_gz_px4] Cleanup done."
 }
@@ -103,7 +104,7 @@ setsid "${GZ_CMD[@]}" &
 GZ_PID=$!
 sleep 5
 
-# --- Start ROS 2 bridge via launch file
+# --- Start ROS 2 bridge and TF publisher
 echo "[run_gz_px4] Starting ROS 2 bridge..."
 if [[ ! -f "${ENV_DIR}/install/setup.bash" ]]; then
   echo "[run_gz_px4] ERROR: ${ENV_DIR}/install/setup.bash not found. Did you colcon build?" >&2
@@ -118,6 +119,8 @@ set -e
 set -u
 ros2 launch gz_px4 bridge.launch.py &
 BRIDGE_PID=$!
+ros2 launch gz_px4 tf.launch.py &
+TF_PID=$!
 
 # --- Start Micro XRCE-DDS Agent (For uORB->ROS2 topics)
 echo "[run_gz_px4] Starting Micro XRCE-DDS Agent..."

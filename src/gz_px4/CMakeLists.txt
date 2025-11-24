@@ -12,6 +12,8 @@ set(EXEC_NAME odom_tf_pub)
 
 # Set path to config folder in repo root
 set(GZ_PX4_BASE_CONFIG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../config)
+set(GZ_PX4_BASE_WORLDS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../worlds)
+set(GZ_PX4_BASE_MODELS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../models)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
@@ -54,13 +56,24 @@ install(DIRECTORY
 install(DIRECTORY
   launch
   DESTINATION share/${PROJECT_NAME}/
-  )  
+)  
   
 # Install workspace config folder in package
 install(DIRECTORY
   ${GZ_PX4_BASE_CONFIG_DIR}/ 
   DESTINATION share/${PROJECT_NAME}/config
-  )
+)
+
+install(DIRECTORY
+  ${GZ_PX4_BASE_WORLDS_DIR}/
+  DESTINATION share/${PROJECT_NAME}/worlds
+)
+
+install(DIRECTORY
+  ${GZ_PX4_BASE_MODELS_DIR}/
+  DESTINATION share/${PROJECT_NAME}/models
+)
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

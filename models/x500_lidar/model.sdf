@@ -34,8 +34,11 @@
       <sensor name='lidar' type='gpu_lidar'>
         <topic>/lidar_front</topic>
         <gz_frame_id>lidar_sensor_link</gz_frame_id> 
-        <pose relative_to="base_link">.15 0 .01 1.57 0 0</pose>
+        <!-- <pose relative_to="base_link">.15 0 .01 1.57 0 0</pose> -->
+        <pose relative_to="lidar_sensor_link">0 0 0 0 0 0</pose>
         <update_rate>20</update_rate>
+
+        <!-- Lidar Specs -->
         <ray>
           <scan>
             <horizontal>
@@ -57,16 +60,17 @@
             <resolution>0.01</resolution>
           </range>
         </ray>
+       
         <always_on>1</always_on>
         <visualize>true</visualize>
+       
+        <!-- Noise Parameters -->
+        <noise type="gaussian">
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
       </sensor>
     
-      <noise>
-        <!-- Noise Parameters -->
-        <type>gaussian</type>
-        <mean>0.0</mean>
-        <stddev>0.01</stddev>
-      </noise>
     </link>
     
     <joint name="lidar_sensor_joint" type="fixed">

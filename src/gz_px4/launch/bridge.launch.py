@@ -4,14 +4,13 @@ ROS 2 Launch File for launching the ros_gz_bridge publishing:
 - Lidar Pointcloud @ /pointcloud
 """
 
-
 import os
 from launch import LaunchDescription
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
-    pkg_share = get_package_share_directory('gz_px4')
+    pkg_share = get_package_share_directory("gz_px4")
     
     config_file = os.path.join(pkg_share, "config", "bridge_config.yaml")
     
@@ -20,10 +19,7 @@ def generate_launch_description():
         executable="parameter_bridge",
         name="gz_ros_bridge",
         output="screen",
-        arguments=[
-            '--ros-args',
-            '-p', f'config_file:={config_file}',
-        ],
+        parameters=[{'config_file': config_file}],
     )
 
     return LaunchDescription([bridge_node])
