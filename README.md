@@ -60,6 +60,14 @@ If the bridge examples are not working try:
 sudo apt install ros-humble-ros-gzharmonic
 ```
 
+### ...
+```
+git clone https://github.com/BjarkeHJ/gz_px4_base.git
+cd gz_px4_base
+git submodule update --init --recursive
+```
+
+
 
 
 
