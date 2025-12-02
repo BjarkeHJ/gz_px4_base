@@ -53,8 +53,8 @@ void PxOdomToTf::odomCallback(const px4_msgs::msg::VehicleOdometry::SharedPtr ms
     // --- Pack into TF message ---
     geometry_msgs::msg::TransformStamped tf_msg;
     tf_msg.header.stamp = this->get_clock()->now();
-    tf_msg.header.frame_id = "odom";      // ENU odom 
-    tf_msg.child_frame_id  = "base_link"; // FLU body
+    tf_msg.header.frame_id = "odom";      // FLU odom (starting fixed frame) 
+    tf_msg.child_frame_id  = "base_link"; // FLU base_link
 
     tf_msg.transform.translation.x = enu_pos.x();
     tf_msg.transform.translation.y = enu_pos.y();
