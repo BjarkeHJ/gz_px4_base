@@ -38,8 +38,8 @@ private:
     float yaw_enu_to_ned(float yaw_enu);
     float quat_to_float(const geometry_msgs::msg::Quaternion& q);
 
-    float temp_yaw = 0.0f;
-    const Eigen::Vector3f temp_pos{2.0, 5.0, 5.0};
+    float temp_yaw = M_PI_2;
+    const Eigen::Vector3f temp_pos{10.0, 4.0, 5.0};
 
     std::vector<Eigen::Vector3f> pos_queue;
     std::vector<float> yaw_queue;

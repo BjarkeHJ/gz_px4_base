@@ -3,7 +3,7 @@
   
   <model name='x500_lidar_front'>
     <include merge='true'>
-      <uri>x500</uri>
+      <uri>x500_ideal</uri> <!-- Looks for local first -->
     </include>
     
     <include merge='true'>
@@ -17,7 +17,7 @@
       <pose relative_to="base_link">-0 0 0 0 0 0</pose>
     </joint>
     
-    <link name="lidar_sensor_link">
+    <link name="lidar_frame">
       <pose relative_to="base_link">0.3 0 0.01 0 0 0</pose>
       <inertial>
         <mass>0.001</mass>
@@ -33,10 +33,10 @@
       
       <sensor name='lidar' type='gpu_lidar'>
         <update_rate>10</update_rate>
-        <topic>/lidar_front</topic>
-        <gz_frame_id>lidar_sensor_link</gz_frame_id> 
+        <topic>/x500/lidar_front</topic>
+        <gz_frame_id>lidar_frame</gz_frame_id>  
         <!-- <pose relative_to="base_link">.15 0 .01 1.57 0 0</pose> -->
-        <pose relative_to="lidar_sensor_link">0 0 0 0 0 0</pose>
+        <pose relative_to="lidar_frame">0 0 0 0 0 0</pose>
 
         <!-- Lidar Specs -->
         <lidar>
@@ -75,10 +75,9 @@
       </sensor>
     </link>
     
-    <joint name="lidar_sensor_joint" type="fixed">
+    <joint name="lidar_frame_joint" type="fixed">
       <parent>base_link</parent>
-      <child>lidar_sensor_link</child>
+      <child>lidar_frame</child>
     </joint>
-  
   </model>
 </sdf>

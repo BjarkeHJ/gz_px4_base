@@ -12,7 +12,7 @@ def generate_launch_description():
     with open(config_file, 'r') as f:
         cfg = yaml.safe_load(f)
         
-    urdf_path = os.path.join(pkg_share, cfg["transform_path"])
+    urdf_path = os.path.join(pkg_share, cfg["model_path"])
 
     odom_tf = Node(
         package="gz_px4",

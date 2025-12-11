@@ -8,6 +8,7 @@ ENV_DIR_DEFAULT="$(cd -- "${SCRIPT_DIR}/.." >/dev/null 2>&1 && pwd)"
 ENV_DIR="${ENV_DIR:-$ENV_DIR_DEFAULT}" # Allows override via env (not used atm)
 PX4_SIM_PATH="${PX4_DIR}/Tools/simulation/gz"
 
+# WORLD_NAME="shelf_world"
 WORLD_NAME="shelf_world"
 PX4_MODEL="x500_lidar"
 HEADLESS=0

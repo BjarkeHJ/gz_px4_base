@@ -8,11 +8,26 @@
   qos_profile: "CLOCK"
 
 # LiDAR bridge: Gz -> ROS2
-- ros_topic_name: "/lidar_front/points_raw"
-  gz_topic_name: "/lidar_front/points"
+- ros_topic_name: "/x500/lidar_front/points_raw"
+  gz_topic_name: "/x500/lidar_front/points"
   ros_type_name: "sensor_msgs/msg/PointCloud2"
   gz_type_name: "gz.msgs.PointCloudPacked"
   direction: "GZ_TO_ROS"
+
+# Ground Truth Odometry bridge: Gz -> ROS2
+- ros_topic_name: "/x500/odom"
+  gz_topic_name: "/x500/odom"
+  ros_type_name: "nav_msgs/msg/Odometry"
+  gz_type_name: "gz.msgs.Odometry"
+  direction: "GZ_TO_ROS"
+
+# IMU Data bridge: Gz -> ROS2
+# - ros_topic_name: "/imu"
+#   gz_topic_name: "/world/shelf_world/model/x500_lidar_0/link/base_link/sensor/imu_sensor/imu"
+#   ros_type_name: "sensor_msgs/msg/Imu"
+#   gz_type_name: "gz.msgs.IMU"
+#   direction: "GZ_TO_ROS"
+
 
 # Camera bridge: Gz -> ROS2
 # Stereo bridge: Gz -> ROS2

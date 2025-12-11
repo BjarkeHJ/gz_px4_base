@@ -23,6 +23,12 @@ PxOdomToTf::PxOdomToTf() : Node("px4_odom_to_tf")
         std::bind(&PxOdomToTf::odomCallback, this, std::placeholders::_1)
     );
 
+    odom_gt_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
+        "/x500/odom",
+        qos_profile,
+        std::bind(&PxOdomToTf::odomCallback_gt, this, std::placeholders::_1)
+    );
+
     RCLCPP_INFO(this->get_logger(), "px4_odom_to_tf node started");
 }
 
@@ -66,6 +72,30 @@ void PxOdomToTf::odomCallback(const px4_msgs::msg::VehicleOdometry::SharedPtr ms
     tf_msg.transform.rotation.z = q_baselink_enu.z();
 
     tf_broadcaster_->sendTransform(tf_msg);
+}
+
+void PxOdomToTf::odomCallback_gt(const nav_msgs::msg::Odometry::SharedPtr msg) {
+    px4_msgs::msg::VehicleOdometry::SharedPtr odom_msg;
+    // PUBLISH TO VISUAL ODOMETRY 
+    
+
+
+
+    // geometry_msgs::msg::TransformStamped tf_msg;
+    // tf_msg.header.stamp = this->get_clock()->now();
+    // tf_msg.header.frame_id = "odom_gt";
+    // tf_msg.child_frame_id = "base_link_gt";
+
+    // tf_msg.transform.translation.x = msg->pose.pose.position.x;
+    // tf_msg.transform.translation.y = msg->pose.pose.position.y;
+    // tf_msg.transform.translation.z = msg->pose.pose.position.z;
+
+    // tf_msg.transform.rotation.w = msg->pose.pose.orientation.w;
+    // tf_msg.transform.rotation.x = msg->pose.pose.orientation.x;
+    // tf_msg.transform.rotation.y = msg->pose.pose.orientation.y;
+    // tf_msg.transform.rotation.z = msg->pose.pose.orientation.z;
+
+    // tf_broadcaster_->sendTransform(tf_msg);
 }
 
 }
