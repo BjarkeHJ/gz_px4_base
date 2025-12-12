@@ -10,8 +10,9 @@ param set EKF2_HGT_REF 3
 param set EKF2_BARO_CTRL 0
 param set EKF2_GPS_CTRL 0
 param set EKF2_RNG_CTRL 0
-param set UXRCE_DDS_SYNCT 0
+param set SYS_HAS_MAG 0
 param set NAV_DLL_ACT 0
+param set UXRCE_DDS_SYNCT 0
 
 In a terminal navigate to:
 ~/PX4-Autopilot
