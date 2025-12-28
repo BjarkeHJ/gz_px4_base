@@ -46,14 +46,14 @@
               <samples>240</samples>
               <resolution>1</resolution>
               <!-- <min_angle>-0.523599</min_angle> -->
-              <min_angle>-0.7504915</min_angle>
-              <max_angle>0.7504915</max_angle>
+              <min_angle>-0.9250245</min_angle>
+              <max_angle>0.9250245</max_angle>
             </horizontal>
             <vertical>
               <samples>180</samples>
               <resolution>1</resolution>
-              <min_angle>-0.9250245</min_angle>
-              <max_angle>0.9250245</max_angle>
+              <min_angle>-0.7504915</min_angle>
+              <max_angle>0.7504915</max_angle>
             </vertical>
           </scan>
           <!-- Range -->
