@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+    <model name="tank">
+        <static>true</static>
+        <link name="tank_link">
+            <visual name="tank_visual">
+                <geometry>
+                    <mesh>
+                        <uri>file://objects/statue_of_liberty/meshes/Water_Tank_stl.stl</uri>
+                        <scale>3 3 3</scale>
+                    </mesh>
+                </geometry>
+                <material>
+                    <ambient>0.5 0.5 0.5 1</ambient>
+                    <diffuse>0.8 0.8 0.8 1</diffuse>
+                </material>
+            </visual>
+            <collision name="tank_collision">
+                <geometry>
+                    <mesh>
+                        <uri>file://objects/statue_of_liberty/meshes/Water_Tank_stl.stl</uri>
+                    </mesh>
+                </geometry>
+            </collision>
+        </link>
+    </model>
+</sdf>

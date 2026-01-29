@@ -12,6 +12,7 @@ PX4_SIM_PATH="${PX4_DIR}/Tools/simulation/gz"
 # WORLD_NAME="warehouse_world"
 # WORLD_NAME="forklift_world"
 WORLD_NAME="statue_of_liberty_world"
+# WORLD_NAME="tank_world"
 PX4_MODEL="x500_lidar"
 HEADLESS=0
 
