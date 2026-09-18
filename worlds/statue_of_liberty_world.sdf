@@ -277,7 +277,8 @@
         <!-- BASE END - Include Custom objects under... -->
         <include>
             <uri>file://objects/statue_of_liberty/model.sdf</uri>
-            <pose>10 0 0 0 0 0</pose>
+            <pose>7.5 0 0 0 0 0</pose>
+            <!-- <pose>5 7.5 0 0 0 0</pose> -->
         </include>
 
     </world>

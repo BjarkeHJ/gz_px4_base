@@ -34,3 +34,4 @@ def generate_launch_description():
     )
 
     return LaunchDescription([odom_tf, static_tf])
+    # return LaunchDescription([static_tf])

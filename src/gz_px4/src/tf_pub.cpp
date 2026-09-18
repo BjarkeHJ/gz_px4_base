@@ -77,7 +77,7 @@ void PxOdomToTf::odomCallback(const px4_msgs::msg::VehicleOdometry::SharedPtr ms
     tf_msg.transform.rotation.y = q_baselink_enu.y();
     tf_msg.transform.rotation.z = q_baselink_enu.z();
 
-    tf_broadcaster_->sendTransform(tf_msg);
+    // tf_broadcaster_->sendTransform(tf_msg);
 }
 
 void PxOdomToTf::odomCallback_gt(const nav_msgs::msg::Odometry::SharedPtr msg) {

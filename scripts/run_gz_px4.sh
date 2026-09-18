@@ -9,11 +9,12 @@ ENV_DIR="${ENV_DIR:-$ENV_DIR_DEFAULT}" # Allows override via env (not used atm)
 PX4_SIM_PATH="${PX4_DIR}/Tools/simulation/gz"
 
 # WORLD_NAME="shelf_world"
-WORLD_NAME="warehouse_world"
+# WORLD_NAME="warehouse_world"
+WORLD_NAME="statue_of_liberty_world"
 # WORLD_NAME="forklift_world"
-# WORLD_NAME="statue_of_liberty_world"
 # WORLD_NAME="tank_world"
 # WORLD_NAME="wall_world"
+# WORLD_NAME="bookstore_world"
 PX4_MODEL="x500_lidar"
 HEADLESS=0
 
@@ -49,7 +50,23 @@ if [[ ! -x "${PX4_DIR}/build/px4_sitl_default/bin/px4" ]]; then
 fi
 
 # --- GZ Resource Path
-export GZ_SIM_RESOURCE_PATH="${ENV_DIR}/worlds:${ENV_DIR}/models:${PX4_SIM_PATH}/models:${PX4_SIM_PATH}/worlds:${GZ_SIM_RESOURCE_PATH:-}"
+BUNDLE_PATHS=""
+if compgen -G "${ENV_DIR}/worlds/objects/*/" > /dev/null; then
+  for d in "${ENV_DIR}/worlds/objects/"*/; do
+    d="${d%/}"                          # strip trailing slash
+    BUNDLE_PATHS+="${d}:"
+    [[ -d "${d}/models" ]] && BUNDLE_PATHS+="${d}/models:"
+  done
+fi
+
+export GZ_SIM_RESOURCE_PATH="\
+${ENV_DIR}/worlds:\
+${ENV_DIR}/models:\
+${BUNDLE_PATHS}\
+${PX4_SIM_PATH}/models:\
+${PX4_SIM_PATH}/worlds:\
+${GZ_SIM_RESOURCE_PATH:-}"
+
 export GZ_SIM_SERVER_CONFIG_PATH="${PX4_SIM_PATH}/server.config"
 export GZ_SIM_SYSTEM_PLUGIN_PATH="${PX4_SIM_PATH}/plugins:${GZ_SIM_SYSTEM_PLUGIN_PATH:-}"
 

@@ -278,7 +278,7 @@
         <!-- Include Forklift -->
          <include>
             <uri>file://objects/forklift/model.sdf</uri>
-            <pose>5 0 0 0 0 0</pose>
+            <pose>2.5 0 0 0 0 0</pose>
          </include>
 
     </world>

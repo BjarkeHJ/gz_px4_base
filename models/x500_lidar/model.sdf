@@ -8,7 +8,7 @@
     
     <include merge='true'>
       <uri>model://LW20</uri>
-      <pose relative_to="base_link">.15 0 .01 0 0 0</pose>
+      <pose relative_to="base_link">0.2 0 0.01 0 0 0</pose>
     </include>
     
     <joint name="lidar_model_joint" type="fixed">
@@ -18,7 +18,7 @@
     </joint>
     
     <link name="lidar_frame">
-      <pose relative_to="base_link">0.3 0 0.01 0 0 0</pose>
+      <pose relative_to="base_link">0.2 0 0.01 0 0 0</pose>
       <inertial>
         <mass>0.001</mass>
         <inertia>
@@ -32,7 +32,7 @@
       </inertial>
       
       <sensor name='lidar' type='gpu_lidar'>
-        <update_rate>10</update_rate>
+        <update_rate>20</update_rate>
         <topic>/x500/lidar_front</topic>
         <gz_frame_id>lidar_frame</gz_frame_id>  
         <!-- <pose relative_to="base_link">.15 0 .01 1.57 0 0</pose> -->
@@ -65,6 +65,7 @@
           <noise type="gaussian">
             <mean>0.0</mean>
             <stddev>0.005</stddev>
+            <!-- <stddev>0.01</stddev> -->
           </noise>
         </lidar>
        
